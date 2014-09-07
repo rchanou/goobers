@@ -22,6 +22,7 @@ var wss = new wsServer({server: server});
 // FUNCTIONS
 var convertLevelMap = function(levelMap){
 	var level = {
+		id: Math.random(),
 		walls: [],
 		playerStarts: [],
 		coins: []
@@ -69,12 +70,14 @@ var goobers = new (function(){
 	}.bind(this);
 	
 	this.players = [];
-	this.addPlayer = function(playerId){
+	this.addPlayer = function(){
 		this.players.push({
-			id: playerId,
+			id: Math.random(),
 			coins: 0,
 			gamesPlayed: []
 		});
+		
+		return _.last(this.players);
 	}.bind(this);
 	
 	this.addPlayerToGame = function(player){
@@ -86,22 +89,33 @@ var goobers = new (function(){
 		
 		_.last(this.games).players.push({
 			id: player.id,
-			coins: 0
+			coins: 0,
+			pos: {x:3, y:3}
 		});
+		
+		return _.last(this.games);
 	}.bind(this);
 })();
 
 goobers.addGame();
 
 // WEBSOCKETS
+
+wss.updateClient = function(state){
+	wss.send(JSON.stringify(state));
+};
+
 wss.on('connection', function(socket){
-	var playerId = Math.random().toString();
+	var player = goobers.addPlayer();
+	var currentGame = goobers.addPlayerToGame(player);
 	
-	goobers.addPlayer(playerId);
-		
-	socket.send(JSON.stringify(convertLevelMap(testLevelMap)));
+	var initialState = {
+		player: player,
+		game: currentGame
+	}
+	socket.send(JSON.stringify(initialState));
 	
 	socket.on('close', function(e){
 		console.log(e);
 	});
-});
+}.bind(this));
