@@ -18,16 +18,7 @@
     </style>
 	<script src='js/react.js'></script>
 	<script src='js/JSXTransformer.js'></script>
-    <script>
-      var host = location.origin.replace(/^http/, 'ws');
-	  console.log(host);
-      var ws = new WebSocket(host);
-      ws.onmessage = function (event) {
-        var li = document.createElement('li');
-        li.innerHTML = JSON.parse(event.data);
-        document.querySelector('#pings').appendChild(li);
-      };
-    </script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js'></script>
   </head>
   <body>
 	<div id ='goobers'>Loading...</div>

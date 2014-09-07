@@ -5,7 +5,7 @@ levels: [
 ]
 
 games: [
-	{ id: #, players: [{id: #, coins: #, pos: {x:1,y:1}, {id: #, coins: #}, pos: {x:1, y:1}], level: { id:#, walls: [], coins: []}, time: 100 },
+	{ id: #, players: [{id: #, coins: #, pos: {x:1,y:1}, {id: #, coins: #}, pos: {x:1, y:1}], level: { id:#, walls: [], playerStarts: [], coins: []}, time: 100 },
 	
 ]
 
