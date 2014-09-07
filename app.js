@@ -17,7 +17,7 @@ server.listen(app.get('port'), function(){
 });
 
 var wss = new wsServer({server: server});
-
+var sockets = [];
 
 // FUNCTIONS
 var convertLevelMap = function(levelMap){
@@ -87,10 +87,12 @@ var goobers = new (function(){
 			this.addGame();
 		}
 		
+		var level = _.last(this.games).level;
+		var emptyStart = level.playerStarts[_.last(this.games).players.length];
 		_.last(this.games).players.push({
 			id: player.id,
 			coins: 0,
-			pos: {x:3, y:3}
+			pos: emptyStart
 		});
 		
 		return _.last(this.games);
@@ -105,8 +107,23 @@ wss.updateClient = function(state){
 	wss.send(JSON.stringify(state));
 };
 
+wss.updateGame = function(game) {
+	sockets.forEach(function(socket, i){
+		if (_.chain(game.players).pluck('id').contains(socket.id).value()){
+			socket.socket.send(JSON.stringify({game: game}));
+		}
+	});
+	/*console.log('running');
+    for(var i in this.clients){
+    	console.log(i);
+    	console.log(this.clients[i]);
+        this.clients[i].send(JSON.stringify(data));
+    }*/
+};
+
 wss.on('connection', function(socket){
 	var player = goobers.addPlayer();
+	sockets.push({id: player.id, socket: socket});
 	var currentGame = goobers.addPlayerToGame(player);
 	
 	var initialState = {
@@ -114,17 +131,18 @@ wss.on('connection', function(socket){
 		game: currentGame
 	}
 	socket.send(JSON.stringify(initialState));
-	
+	wss.updateGame({game: initialState.game});
+
 	socket.onmessage = function(event){
 		var message = JSON.parse(event.data);
 		switch (message.type){
 			case 'request-move':
-				console.log(message.payload);
-				console.log(goobers.games);
+				//console.log(message.payload);
+				//console.log(goobers.games);
 				var game = _.findWhere(goobers.games, { id: message.payload.gameId });
 				var player = _.findWhere(game.players, { id: message.payload.playerId });
-				console.log(game);
-				console.log(player);
+				//console.log(game);
+				//console.log(player);
 				var nextPos = {
 					x: player.pos.x,
 					y: player.pos.y
@@ -136,10 +154,13 @@ wss.on('connection', function(socket){
 				break;
 		}
 
-		socket.send(JSON.stringify(initialState));
-	};
+		wss.updateGame(game);
+		//wss.broadcast('a');
+		//for (var client in this.clients)
+	}.bind(this);
 
 	socket.on('close', function(e){
+		sockets = _.reject(sockets, function(socket){ return id == player.id });
 		console.log(e);
 	});
 }.bind(this));
