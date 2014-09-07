@@ -1,0 +1,55 @@
+
+levels: [
+	{ id: #, walls: [{x:1,y:1},{x:2,y:2}...] },
+	[{x:2,y:2}...]
+]
+
+games: [
+	{ id: #, players: [{id: #, coins: #, pos: {x:1,y:1}, {id: #, coins: #}, pos: {x:1, y:1}], level: { id:#, walls: [], coins: []}, time: 100 },
+	
+]
+
+players: [
+	{ id: #, name: 'string', gamesPlayed: [{rank: #, players: #, coins: #}] },
+	{ id: #, name: 'string', gamesPlayed: [{rank: #, players: #, coins: #}] }
+]
+
+currentlevel
+player
+coin
+
+awaiting players
+game start
+trigger timer
+allow movement
+game end
+
+
+on playerWaiting
+	add to last game
+	if last game.length >= 4
+		emit gamestarted(game.last)
+		games.add({players:[]})
+
+ongamestarted and key pressed
+
+
+
+
+Goober
+	getInitialState: function(){
+		return {
+			player: { id: #, name: 'string', gamesPlayed: [{rank: #, players: #, coins: #},...] },
+			currentGame: {
+				id: #,
+				time: #, 
+				players: [id: #, coins: #, pos: {x:#, y:#}, ...],
+				currentLevel: { 
+					id: #, 
+					walls: [{x: 1, y: 1}...],
+					coins: []
+				}
+			}
+		},
+		render
+	}

@@ -1,0 +1,22 @@
+{
+  "name": "goobers",
+  "version": "1.0.0",
+  "description": "Multiplayer game",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rchanou/goobers"
+  },
+  "keywords": [
+    "goobers"
+  ],
+  "author": "Ronald Chanou",
+  "license": "Apache",
+  "bugs": {
+    "url": "https://github.com/rchanou/goobers/issues"
+  },
+  "homepage": "https://github.com/rchanou/goobers"
+}
