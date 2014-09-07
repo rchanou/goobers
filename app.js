@@ -115,6 +115,30 @@ wss.on('connection', function(socket){
 	}
 	socket.send(JSON.stringify(initialState));
 	
+	socket.onmessage = function(event){
+		var message = JSON.parse(event.data);
+		switch (message.type){
+			case 'request-move':
+				console.log(message.payload);
+				console.log(goobers.games);
+				var game = _.findWhere(goobers.games, { id: message.payload.gameId });
+				var player = _.findWhere(game.players, { id: message.payload.playerId });
+				console.log(game);
+				console.log(player);
+				var nextPos = {
+					x: player.pos.x,
+					y: player.pos.y
+				};
+				nextPos[message.payload.axis] += parseInt(message.payload.dir);
+				if (typeof _.findWhere(game.level.walls, nextPos) == 'undefined'){
+					player.pos = nextPos;
+				}
+				break;
+		}
+
+		socket.send(JSON.stringify(initialState));
+	};
+
 	socket.on('close', function(e){
 		console.log(e);
 	});

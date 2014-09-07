@@ -59,8 +59,38 @@ var Goobers = React.createClass({
 	    	this.setState(newState);*/
 	    }.bind(this);
 		document.onkeydown = function(){
-
-		};
+            var key = (window.event) ? event.keyCode : e.keyCode;
+            switch (key){
+                case 37: { // left
+                    this.requestMove('x', -1);
+                    break;
+                }
+                case 38: { // up
+                    this.requestMove('y', -1);
+                    break;
+                }
+                case 39: { // right
+                    this.requestMove('x', +1);
+                    break;
+                }
+                case 40: { // down
+                    this.requestMove('y', +1);
+                    break;
+                }                    
+            }
+		}.bind(this);
+	},
+	requestMove: function(axis, dir){
+		var message = {
+			type: 'request-move',
+			payload: {
+				gameId: this.state.game.id,
+				playerId: this.state.player.id,
+				axis: axis,
+				dir: dir
+			}
+		}
+		this.socket.send(JSON.stringify(message));
 	},
 	checkGameReady: function(){
 		return this.state.game.players.length >= this.state.game.level.playerStarts.length;
