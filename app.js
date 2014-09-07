@@ -148,7 +148,10 @@ wss.on('connection', function(socket){
 					y: player.pos.y
 				};
 				nextPos[message.payload.axis] += parseInt(message.payload.dir);
-				if (typeof _.findWhere(game.level.walls, nextPos) == 'undefined'){
+				if ((typeof _.findWhere(game.level.walls, nextPos) == 'undefined')
+					&& _.every(game.players, function(p) {
+						return !(p.pos.x == nextPos.x && p.pos.y == nextPos.y);
+					})){
 					player.pos = nextPos;
 				}
 				break;
